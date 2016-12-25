@@ -18,4 +18,9 @@
     <string name="eng_totpaid">Total Paid:</string>
     <string name="eng_lastshare">Last Share:</string>
     <string name="eng_totshares">Total Shares:</string>
+
+    <string name="eng_netstats">Network Stats:</string>
+    <string name="eng_diff">Difficulty:</string>
+    <string name="eng_blockheight">Block Chain Height:</string>
+    <string name="eng_lastreward">Last Reward:</string>
 </resources>
