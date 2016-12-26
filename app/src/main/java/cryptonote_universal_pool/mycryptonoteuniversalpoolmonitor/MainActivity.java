@@ -12,6 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by tamfire on 22/12/16.
  */
@@ -39,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
+
+        Runnable fetchData = new Runnable() {
+            @Override
+            public void run() {
+                if (PoolSettings.getInstance().shouldSync())
+                    new DataFetcher().execute();
+            }
+        };
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(fetchData, 0, 1, TimeUnit.MINUTES);
     }
 
     @Override
@@ -115,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         PoolSettings settings = PoolSettings.getInstance();
         settings.setPoolAddr(savedSettings.getString("pooladdr", ""));
         settings.setPoolPort(savedSettings.getInt("poolport", 8117));
+        settings.setSyncState(savedSettings.getBoolean("syncstate", true));
     }
 
     private void saveAppSettings() {
@@ -124,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         PoolSettings settings = PoolSettings.getInstance();
         editor.putString("pooladdr", settings.getPoolAddr());
         editor.putInt("poolport", settings.getPoolPort());
-        editor.commit();
+        editor.putBoolean("syncstate", settings.shouldSync());
+        editor.apply();
     }
 }

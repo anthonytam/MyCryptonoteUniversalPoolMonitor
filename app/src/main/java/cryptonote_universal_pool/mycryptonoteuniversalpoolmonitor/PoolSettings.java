@@ -8,6 +8,7 @@ public class PoolSettings {
 
     private String poolAddress;
     private int poolPort;
+    private boolean syncData;
 
     public synchronized static PoolSettings getInstance() {
         if (classInstance == null)
@@ -27,5 +28,9 @@ public class PoolSettings {
 
     public int getPoolPort() { return poolPort; }
 
-    public void setPoolPort(int poolPort) { this.poolPort = poolPort; }
+    public void setPoolPort(int newPort) { poolPort = newPort; }
+
+    public boolean shouldSync() { return syncData; }
+
+    public void setSyncState (boolean newState) { syncData = newState; }
 }
