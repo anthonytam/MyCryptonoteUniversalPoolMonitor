@@ -69,10 +69,10 @@ public class DataFetcher extends AsyncTask<String, String, Boolean> {
 
             JSONObject config = json.getJSONObject("stats");
 
-            settings.setTotalShares(Long.getLong(config.getString("hashes")));
-            settings.setLastShare(Long.getLong(config.getString("lastShare")));
-            settings.setPendingBalance(Long.getLong(config.getString("balance")));
-            settings.setTotalPaid(Long.getLong(config.getString("paid")));
+            settings.setTotalShares(Long.parseLong(config.getString("hashes")));
+            settings.setLastShare(Long.parseLong(config.getString("lastShare")));
+            settings.setPendingBalance(Long.parseLong(config.getString("balance")));
+            settings.setTotalPaid(Long.parseLong(config.getString("paid")));
             settings.setHashRate(config.getString("hashrate"));
         } catch (JSONException e) {
             e.printStackTrace();

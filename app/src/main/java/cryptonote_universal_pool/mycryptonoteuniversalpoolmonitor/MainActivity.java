@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                                                                                                  0);
         PoolSettings settings = PoolSettings.getInstance();
         settings.setPoolAddr(savedSettings.getString("pooladdr", ""));
+        settings.setWalletAddress(savedSettings.getString("walletaddr", ""));
         settings.setPoolPort(savedSettings.getInt("poolport", 8117));
         settings.setSyncState(savedSettings.getBoolean("syncstate", true));
     }
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = savedSettings.edit();
         PoolSettings settings = PoolSettings.getInstance();
         editor.putString("pooladdr", settings.getPoolAddr());
+        editor.putString("walletaddr", settings.getWalletAddress());
         editor.putInt("poolport", settings.getPoolPort());
         editor.putBoolean("syncstate", settings.shouldSync());
         editor.apply();

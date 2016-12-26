@@ -30,4 +30,11 @@
     <string name="eng_settings">App Settings:</string>
     <string name="eng_pooladdr">Pool URL:</string>
     <string name="eng_poolport">Pool API Port:</string>
+    <string name="defaultport">8117</string>
+    <string name="eng_walletaddr">Wallet Address:</string>
+
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
 </resources>

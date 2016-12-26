@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor">
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
@@ -17,6 +18,7 @@
                     <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
             </activity>
+            <activity android:name="cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor.barcode.BarcodeCaptureActivity" />
     </application>
 
 </manifest>

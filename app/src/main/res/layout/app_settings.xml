@@ -44,8 +44,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:text="8117"
+        android:text="@string/defaultport"
         android:ems="10"
         android:id="@+id/edit_poolport" />
 
+    <TextView
+        android:id="@+id/txt_walletaddr_header"
+        android:text="@string/eng_walletaddr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="24sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/edit_walletaddr"
+            android:layout_toLeftOf="@+id/btn_scanaddr"
+            android:layout_toStartOf="@+id/btn_scanaddr" />
+        <Button
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/btn_scanaddr"
+            android:background="@android:drawable/ic_menu_camera"
+            android:layout_width="48dp" />
+    </RelativeLayout>
 </LinearLayout>
