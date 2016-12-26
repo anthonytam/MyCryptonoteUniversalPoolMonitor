@@ -6,8 +6,8 @@ package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 public class PoolSettings {
     private static PoolSettings classInstance;
 
-    private String poolAddress = "";
-    private int    poolPort    = 8177;
+    private String poolAddress;
+    private int poolPort;
 
     public synchronized static PoolSettings getInstance() {
         if (classInstance == null)

@@ -6,6 +6,8 @@
 
     <string name="action_settings">Settings</string>
 
+    <string name="pool_preferences">poolpreferences</string>
+
     <string name="eng_mypool">My Pool:</string>
     <string name="eng_hashrate">Hash Rate:</string>
     <string name="eng_blockfound">Block Found:</string>

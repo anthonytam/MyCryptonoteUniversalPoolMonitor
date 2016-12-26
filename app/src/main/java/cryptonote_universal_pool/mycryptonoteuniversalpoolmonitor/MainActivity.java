@@ -1,5 +1,6 @@
 package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,8 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
-import java.util.List;
 
 /**
  * Created by tamfire on 22/12/16.
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadAppSettings();
         currentFragment = new PoolStatsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent,currentFragment)
                                                                                         .commit();
@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
-
-        setupAppSettings();
     }
 
     @Override
@@ -93,8 +91,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        if (currentFragment.toString().equals("APP_SETTINGS"))
-            ((DissmissableFragment)currentFragment).onDismiss();
+        if (currentFragment.toString().equals("APP_SETTINGS")) {
+            ((DissmissableFragment) currentFragment).onDismiss();
+            saveAppSettings();
+        }
         currentFragment = fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -109,10 +109,21 @@ public class MainActivity extends AppCompatActivity {
                 R.string.drawer_close);
     }
 
-    private void setupAppSettings() {
+    private void loadAppSettings() {
+        SharedPreferences savedSettings = getSharedPreferences(getString(R.string.pool_preferences),
+                                                                                                 0);
         PoolSettings settings = PoolSettings.getInstance();
-        //TODO: Read from saved settings
-        settings.setPoolAddr("monero.us.to");
-        settings.setPoolPort(8177);
+        settings.setPoolAddr(savedSettings.getString("pooladdr", ""));
+        settings.setPoolPort(savedSettings.getInt("poolport", 8117));
+    }
+
+    private void saveAppSettings() {
+        SharedPreferences savedSettings = getSharedPreferences(getString(R.string.pool_preferences),
+                                                                                                 0);
+        SharedPreferences.Editor editor = savedSettings.edit();
+        PoolSettings settings = PoolSettings.getInstance();
+        editor.putString("pooladdr", settings.getPoolAddr());
+        editor.putInt("poolport", settings.getPoolPort());
+        editor.commit();
     }
 }
