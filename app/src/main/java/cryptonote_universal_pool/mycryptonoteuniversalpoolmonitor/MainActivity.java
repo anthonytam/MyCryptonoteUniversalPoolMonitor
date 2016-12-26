@@ -11,19 +11,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.List;
+
 /**
  * Created by tamfire on 22/12/16.
  */
-
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
+    private Fragment currentFragment;
 
     private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentFragment = new PoolStatsFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.flContent,currentFragment)
+                                                                                        .commit();
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -34,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
+
+        setupAppSettings();
     }
 
     @Override
@@ -86,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+        if (currentFragment.toString().equals("APP_SETTINGS"))
+            ((DissmissableFragment)currentFragment).onDismiss();
+        currentFragment = fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
@@ -97,5 +107,12 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,
                 R.string.drawer_close);
+    }
+
+    private void setupAppSettings() {
+        PoolSettings settings = PoolSettings.getInstance();
+        //TODO: Read from saved settings
+        settings.setPoolAddr("monero.us.to");
+        settings.setPoolPort(8177);
     }
 }

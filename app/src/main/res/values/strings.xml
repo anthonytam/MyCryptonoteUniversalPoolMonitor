@@ -23,4 +23,8 @@
     <string name="eng_diff">Difficulty:</string>
     <string name="eng_blockheight">Block Chain Height:</string>
     <string name="eng_lastreward">Last Reward:</string>
+
+    <string name="eng_settings">App Settings:</string>
+    <string name="eng_pooladdr">Pool URL:</string>
+    <string name="eng_poolport">Pool API Port:</string>
 </resources>
