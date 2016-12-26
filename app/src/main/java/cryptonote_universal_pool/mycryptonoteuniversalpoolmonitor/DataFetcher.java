@@ -2,6 +2,7 @@ package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
 import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,39 +13,91 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Created by tamfire on 26/12/16.
  */
-public class DataFetcher extends AsyncTask<String, String, String> {
+public class DataFetcher extends AsyncTask<String, String, Boolean> {
 
-    protected String doInBackground(String... params) {
-        String generalStats = getGeneralStats();
+    protected Boolean doInBackground(String... params) {
+        PoolSettings settings = PoolSettings.getInstance();
+        String generalStats = requestStats("/stats");
         if (generalStats.equals(""))
-            return null;
+            return false;
         try {
             JSONObject json = new JSONObject(generalStats);
+
+            JSONObject config = json.getJSONObject("config");
+            JSONObject donationAddrs = config.getJSONObject("donation");
+            settings.setFee(config.getDouble("fee"));
+            settings.setCoinUnits(config.getLong("coinUnits"));
+            settings.setCoinDifficultyTarget(config.getInt("coinDifficultyTarget"));
+            settings.setSymbol(config.getString("symbol"));
+            settings.setMinPayment(config.getLong("minPaymentThreshold"));
+            settings.setDonationAmount(0.0);
+            for(Iterator it = donationAddrs.keys(); it.hasNext(); )
+                settings.setDonationAmount(settings.getDonationAmount() + donationAddrs.getDouble(
+                                                                                (String)it.next()));
+
+            JSONObject pool = json.getJSONObject("pool");
+            settings.setTotalBlocks(pool.getInt("totalBlocks"));
+            settings.setCurrMiners(pool.getInt("miners"));
+            settings.setPoolHashRate(pool.getLong("hashrate"));
+            settings.setPoolLastBlockFound(pool.getLong("lastBlockFound"));
+
+            JSONObject network = json.getJSONObject("network");
+            settings.setDifficulty(network.getLong("difficulty"));
+            settings.setBlockHeight(network.getLong("height"));
+            settings.setNetworkLastBlockFound(network.getLong("timestamp"));
+            settings.setLastBlockReward(network.getLong("reward"));
+
         } catch (JSONException e) {
             e.printStackTrace();
+            return false;
         }
+
+        String walletStats = requestStats(String.format("/stats_address?address=%s",
+                                                        settings.getWalletAddress()));
+        if (walletStats.equals(""))
+            return false;
+        try {
+            JSONObject json = new JSONObject(walletStats);
+            if (json.has("error"))
+                return false;
+
+            JSONObject config = json.getJSONObject("stats");
+
+            settings.setTotalShares(Long.getLong(config.getString("hashes")));
+            settings.setLastShare(Long.getLong(config.getString("lastShare")));
+            settings.setPendingBalance(Long.getLong(config.getString("balance")));
+            settings.setTotalPaid(Long.getLong(config.getString("paid")));
+            settings.setHashRate(config.getString("hashrate"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
-    private String getGeneralStats () {
+
+    private String requestStats (String path) {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         PoolSettings settings = PoolSettings.getInstance();
         try {
-            URL url = new URL("http", settings.getPoolAddr(), settings.getPoolPort(), "/stats");
+            URL url = new URL("http", settings.getPoolAddr(), settings.getPoolPort(), path);
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
 
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             String line;
 
             while ((line = reader.readLine()) != null) {
-                buffer.append(line+"\n");
+                buffer.append(String.format(Locale.US, "%s%s", line, "\n"));
             }
             return buffer.toString();
             // Includes MalformedURLException (Is a subclass)
@@ -62,6 +115,6 @@ public class DataFetcher extends AsyncTask<String, String, String> {
                 e.printStackTrace();
             }
         }
-        return null;
+        return "";
     }
 }

@@ -11,6 +11,7 @@
     <string name="eng_mypool">My Pool:</string>
     <string name="eng_hashrate">Hash Rate:</string>
     <string name="eng_blockfound">Block Found:</string>
+    <string name="eng_totblocks">Total Blocks:</string>
     <string name="eng_numminers">Number of Miners:</string>
     <string name="eng_donations">Donations:</string>
     <string name="eng_poolfee">Pool Fee:</string>

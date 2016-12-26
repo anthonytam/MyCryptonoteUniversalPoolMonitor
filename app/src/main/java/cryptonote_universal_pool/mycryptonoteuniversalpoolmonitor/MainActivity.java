@@ -3,6 +3,7 @@ package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.concurrent.Executors;
@@ -30,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadAppSettings();
+        setContentView(R.layout.activity_main);
         currentFragment = new PoolStatsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent,currentFragment)
                                                                                         .commit();
-        setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,12 +49,13 @@ public class MainActivity extends AppCompatActivity {
         Runnable fetchData = new Runnable() {
             @Override
             public void run() {
+                Log.d("GetData", "Fetching...");
                 if (PoolSettings.getInstance().shouldSync())
                     new DataFetcher().execute();
             }
         };
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(fetchData, 0, 1, TimeUnit.MINUTES);
+        executorService.scheduleAtFixedRate(fetchData, 0, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -106,9 +109,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (currentFragment.toString().equals("APP_SETTINGS")) {
-            ((DissmissableFragment) currentFragment).onDismiss();
             saveAppSettings();
         }
+        ((DissmissableFragment) currentFragment).onDismiss();
+
         currentFragment = fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
