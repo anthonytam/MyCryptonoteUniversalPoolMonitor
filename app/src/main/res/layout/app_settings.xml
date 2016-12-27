@@ -77,4 +77,19 @@
             android:background="@android:drawable/ic_menu_camera"
             android:layout_width="48dp" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txt_refreshrate_header"
+        android:text="@string/eng_refreshrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="24sp" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spn_refresh"
+        android:spinnerMode="dialog"
+        android:entries="@array/refreshOptions" />
 </LinearLayout>

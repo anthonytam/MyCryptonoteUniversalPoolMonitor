@@ -32,6 +32,7 @@
     <string name="eng_poolport">Pool API Port:</string>
     <string name="defaultport">8117</string>
     <string name="eng_walletaddr">Wallet Address:</string>
+    <string name="eng_refreshrate">Refresh Rate:</string>
 
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>

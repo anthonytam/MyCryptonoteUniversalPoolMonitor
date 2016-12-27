@@ -8,19 +8,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor.barcode.BarcodeCaptureActivity;
 
 /**
- * Created by tamfire on 22/12/16.
+ * Fragment for managing app settings. All options which can be changed my the user are here
+ * and will be saved when the user leaves the screen by using the DissmissableFragment interface.
+ *
+ * @author Anthony Tam
  */
 public class AppSettingsFragment extends Fragment implements DissmissableFragment,
                                                              View.OnClickListener {
@@ -39,6 +42,24 @@ public class AppSettingsFragment extends Fragment implements DissmissableFragmen
         ((EditText)view.findViewById(R.id.edit_poolport)).setText(String.format(Locale.US, "%d",
                                                                         settings.getPoolPort()));
         ((EditText)view.findViewById(R.id.edit_walletaddr)).setText(settings.getWalletAddress());
+        if (settings.shouldSync())
+            ((Spinner)view.findViewById(R.id.spn_refresh)).setSelection(getIndex((Spinner)view
+                .findViewById(R.id.spn_refresh),String.format(Locale.US, "%d %s",
+                settings.getSyncScalar(), settings.getSyncUnit().name().charAt(0) +
+                        (settings.getSyncScalar() == 1 && settings.getSyncUnit().name().equals("MINUTES") ||
+                                settings.getSyncUnit().name().equals("HOURS") ? settings.getSyncUnit().name()
+                                .toLowerCase(Locale.US).substring(1, settings.getSyncUnit().name().length() - 1) :
+                                settings.getSyncUnit().name().toLowerCase(Locale.US).substring(1)))));
+        else
+            ((Spinner)view.findViewById(R.id.spn_refresh)).setSelection(getIndex((Spinner)view
+                .findViewById(R.id.spn_refresh), "Never"));
+    }
+
+    private int getIndex(Spinner spinner, String myString){
+        for (int i=0;i<spinner.getCount();i++)
+            if (spinner.getItemAtPosition(i).equals(myString))
+                return i;
+        return -1;
     }
 
     @Override
@@ -56,6 +77,44 @@ public class AppSettingsFragment extends Fragment implements DissmissableFragmen
                                                         R.id.edit_poolport)).getText().toString()));
         settings.setWalletAddress(((EditText)currentView.findViewById(R.id.edit_walletaddr))
                                                                              .getText().toString());
+        //TODO: Validate wallet
+
+        switch (((Spinner)currentView.findViewById(R.id.spn_refresh)).getSelectedItem().toString()) {
+            case "30 Seconds":
+                settings.setSyncScalar(30);
+                settings.setSyncUnit(TimeUnit.SECONDS);
+                settings.setSyncState(true);
+                break;
+            case "1 Minute":
+                settings.setSyncScalar(1);
+                settings.setSyncUnit(TimeUnit.MINUTES);
+                settings.setSyncState(true);
+                break;
+            case "5 Minutes":
+                settings.setSyncScalar(5);
+                settings.setSyncUnit(TimeUnit.MINUTES);
+                settings.setSyncState(true);
+                break;
+            case "15 Minutes":
+                settings.setSyncScalar(15);
+                settings.setSyncUnit(TimeUnit.MINUTES);
+                settings.setSyncState(true);
+                break;
+            case "30 Minutes":
+                settings.setSyncScalar(30);
+                settings.setSyncUnit(TimeUnit.MINUTES);
+                settings.setSyncState(true);
+                break;
+            case "1 Hour":
+                settings.setSyncScalar(1);
+                settings.setSyncUnit(TimeUnit.HOURS);
+                settings.setSyncState(true);
+                break;
+            case "Never":
+                settings.setSyncState(false);
+                break;
+        }
+
     }
 
     public void onClick(View view) {

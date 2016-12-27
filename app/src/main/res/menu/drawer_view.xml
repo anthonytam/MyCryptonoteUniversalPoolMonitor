@@ -19,5 +19,9 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
             android:title="Settings" />
+        <item
+            android:id="@+id/nav_refreshNow"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Refresh Now" />
     </group>
 </menu>

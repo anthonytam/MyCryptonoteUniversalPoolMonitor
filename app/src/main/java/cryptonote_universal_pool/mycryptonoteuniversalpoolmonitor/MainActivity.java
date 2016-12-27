@@ -3,7 +3,7 @@ package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,11 +32,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadAppSettings();
+
+        Runnable fetchData = new Runnable() {
+            @Override
+            public void run() {
+                if (PoolSettings.getInstance().shouldSync())
+                    new DataFetcher().execute();
+            }
+        };
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(fetchData, 0,
+                                            PoolSettings.getInstance().getSyncScalar(),
+                                            PoolSettings.getInstance().getSyncUnit());
+
         setContentView(R.layout.activity_main);
         currentFragment = new PoolStatsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent,currentFragment)
                                                                                         .commit();
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,17 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
-
-        Runnable fetchData = new Runnable() {
-            @Override
-            public void run() {
-                Log.d("GetData", "Fetching...");
-                if (PoolSettings.getInstance().shouldSync())
-                    new DataFetcher().execute();
-            }
-        };
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(fetchData, 0, 20, TimeUnit.SECONDS);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                         selectDrawerItem(menuItem);
                         return true;
                     }
@@ -103,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_network:
                 fragment = new NetworkStatsFragment();
                 break;
+            case R.id.nav_refreshNow:
+                new DataFetcher().execute();
+                fragment = currentFragment;
+                break;
             default:
                 fragment = new PoolStatsFragment();
                 break;
@@ -119,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
+        //TODO: Close keyboard
         mDrawer.closeDrawers();
     }
 
@@ -135,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         settings.setWalletAddress(savedSettings.getString("walletaddr", ""));
         settings.setPoolPort(savedSettings.getInt("poolport", 8117));
         settings.setSyncState(savedSettings.getBoolean("syncstate", true));
+        settings.setSyncUnit(TimeUnit.valueOf(savedSettings.getString("syncunit", "MINUTES")));
+        settings.setSyncScalar(savedSettings.getInt("syncscalar", 1));
     }
 
     private void saveAppSettings() {
@@ -146,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("walletaddr", settings.getWalletAddress());
         editor.putInt("poolport", settings.getPoolPort());
         editor.putBoolean("syncstate", settings.shouldSync());
+        editor.putString("syncunit", settings.getSyncUnit().name());
+        editor.putInt("syncscalar", settings.getSyncScalar());
+
         editor.apply();
     }
 }

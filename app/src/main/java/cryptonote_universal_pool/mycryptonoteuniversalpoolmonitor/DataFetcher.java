@@ -1,8 +1,6 @@
 package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
 import android.os.AsyncTask;
-import android.os.SystemClock;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;

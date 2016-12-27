@@ -1,5 +1,7 @@
 package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by tamfire on 25/12/16.
  */
@@ -10,6 +12,8 @@ public class PoolSettings {
     private String walletAddress;
     private int poolPort;
     private boolean syncData;
+    private TimeUnit syncUnit;
+    private int syncScalar;
 
     private double fee;
     private long coinUnits;
@@ -134,6 +138,14 @@ public class PoolSettings {
     public String getSymbol() { return symbol; }
 
     public void setSymbol(String symbol) { this.symbol = symbol; }
+
+    public TimeUnit getSyncUnit() { return syncUnit; }
+
+    public void setSyncUnit(TimeUnit syncUnit) { this.syncUnit = syncUnit; }
+
+    public int getSyncScalar() { return syncScalar; }
+
+    public void setSyncScalar(int syncScalar) { this.syncScalar = syncScalar; }
 
     public synchronized static PoolSettings getInstance() {
         if (classInstance == null)
