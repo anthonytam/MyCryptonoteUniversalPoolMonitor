@@ -3,9 +3,10 @@ package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by tamfire on 25/12/16.
+ * A singleton object containing all the information required in the app. Uses
+ * a synchronized getter since the object is used in multiple threads.
  */
-public class PoolSettings {
+class PoolSettings {
     private static PoolSettings classInstance;
 
     private String poolAddress;
@@ -38,116 +39,116 @@ public class PoolSettings {
     private String hashRate;
     private long totalShares;
 
-    public long getTotalShares() { return totalShares; }
+    long getTotalShares() { return totalShares; }
 
-    public void setTotalShares(long totalShares) { this.totalShares = totalShares; }
+    void setTotalShares(long totalShares) { this.totalShares = totalShares; }
 
-    public long getPendingBalance() { return pendingBalance; }
+    long getPendingBalance() { return pendingBalance; }
 
-    public void setPendingBalance(long pendingBalance) { this.pendingBalance = pendingBalance; }
+    void setPendingBalance(long pendingBalance) { this.pendingBalance = pendingBalance; }
 
-    public long getTotalPaid() { return totalPaid; }
+    long getTotalPaid() { return totalPaid; }
 
-    public void setTotalPaid(long totalPaid) { this.totalPaid = totalPaid; }
+    void setTotalPaid(long totalPaid) { this.totalPaid = totalPaid; }
 
-    public long getLastShare() { return lastShare; }
+    long getLastShare() { return lastShare; }
 
-    public void setLastShare(long lastShare) { this.lastShare = lastShare; }
+    void setLastShare(long lastShare) { this.lastShare = lastShare; }
 
-    public String getHashRate() { return hashRate; }
+    String getHashRate() { return hashRate; }
 
-    public void setHashRate(String hashRate) { this.hashRate = hashRate; }
+    void setHashRate(String hashRate) { this.hashRate = hashRate; }
 
-    public long getNetworkHashRate() { return difficulty/coinDifficultyTarget; }
+    long getNetworkHashRate() { return difficulty/coinDifficultyTarget; }
 
-    public long getDifficulty() { return difficulty; }
+    long getDifficulty() { return difficulty; }
 
-    public void setDifficulty(long difficulty) { this.difficulty = difficulty; }
+    void setDifficulty(long difficulty) { this.difficulty = difficulty; }
 
-    public long getBlockHeight() { return blockHeight; }
+    long getBlockHeight() { return blockHeight; }
 
-    public void setBlockHeight(long blockHeight) { this.blockHeight = blockHeight; }
+    void setBlockHeight(long blockHeight) { this.blockHeight = blockHeight; }
 
-    public long getNetworkLastBlockFound() { return networkLastBlockFound; }
+    long getNetworkLastBlockFound() { return networkLastBlockFound; }
 
-    public void setNetworkLastBlockFound(long networkLastBlockFound) {
+    void setNetworkLastBlockFound(long networkLastBlockFound) {
         this.networkLastBlockFound = networkLastBlockFound;
     }
 
-    public long getLastBlockReward() { return lastBlockReward; }
+    long getLastBlockReward() { return lastBlockReward; }
 
-    public void setLastBlockReward(long lastBlockReward) {
+    void setLastBlockReward(long lastBlockReward) {
         this.lastBlockReward = lastBlockReward;
     }
 
-    public long getPoolLastBlockFound() { return poolLastBlockFound; }
+    long getPoolLastBlockFound() { return poolLastBlockFound; }
 
-    public void setPoolLastBlockFound(long poolLastBlockFound) {
+    void setPoolLastBlockFound(long poolLastBlockFound) {
         this.poolLastBlockFound = poolLastBlockFound; }
 
-    public long getPoolHashRate() { return poolHashRate; }
+    long getPoolHashRate() { return poolHashRate; }
 
-    public void setPoolHashRate(long poolHashRate) { this.poolHashRate = poolHashRate; }
+    void setPoolHashRate(long poolHashRate) { this.poolHashRate = poolHashRate; }
 
-    public int getCurrMiners() { return currMiners; }
+    int getCurrMiners() { return currMiners; }
 
-    public void setCurrMiners(int currMiners) { this.currMiners = currMiners; }
+    void setCurrMiners(int currMiners) { this.currMiners = currMiners; }
 
-    public int getTotalBlocks() { return totalBlocks; }
+    int getTotalBlocks() { return totalBlocks; }
 
-    public void setTotalBlocks(int totalBlocks) { this.totalBlocks = totalBlocks; }
+    void setTotalBlocks(int totalBlocks) { this.totalBlocks = totalBlocks; }
 
-    public String getPoolAddr() { return poolAddress; }
+    String getPoolAddr() { return poolAddress; }
 
-    public void setPoolAddr(String poolAddress) { this.poolAddress = poolAddress; }
+    void setPoolAddr(String poolAddress) { this.poolAddress = poolAddress; }
 
-    public String getWalletAddress() { return  walletAddress; }
+    String getWalletAddress() { return  walletAddress; }
 
-    public void setWalletAddress(String walletAddress) { this.walletAddress = walletAddress; }
+    void setWalletAddress(String walletAddress) { this.walletAddress = walletAddress; }
 
-    public int getPoolPort() { return poolPort; }
+    int getPoolPort() { return poolPort; }
 
-    public void setPoolPort(int poolPort) { this.poolPort = poolPort; }
+    void setPoolPort(int poolPort) { this.poolPort = poolPort; }
 
-    public boolean shouldSync() { return syncData; }
+    boolean shouldSync() { return syncData; }
 
-    public void setSyncState(boolean syncData) { this.syncData = syncData; }
+    void setSyncState(boolean syncData) { this.syncData = syncData; }
 
-    public double getFee() { return fee; }
+    double getFee() { return fee; }
 
-    public void setFee(double fee) { this.fee = fee; }
+    void setFee(double fee) { this.fee = fee; }
 
-    public long getCoinUnits() { return coinUnits; }
+    long getCoinUnits() { return coinUnits; }
 
-    public void setCoinUnits(long coinUnits) { this.coinUnits = coinUnits; }
+    void setCoinUnits(long coinUnits) { this.coinUnits = coinUnits; }
 
-    public int getCoinDifficultyTarget() { return coinDifficultyTarget; }
+    int getCoinDifficultyTarget() { return coinDifficultyTarget; }
 
-    public void setCoinDifficultyTarget(int coinDifficultyTarget) {
+    void setCoinDifficultyTarget(int coinDifficultyTarget) {
         this.coinDifficultyTarget = coinDifficultyTarget;
     }
 
-    public double getDonationAmount() { return donationAmount; }
+    double getDonationAmount() { return donationAmount; }
 
-    public void setDonationAmount(double donationAmount) { this.donationAmount = donationAmount; }
+    void setDonationAmount(double donationAmount) { this.donationAmount = donationAmount; }
 
-    public long getMinPayment() { return minPayment; }
+    long getMinPayment() { return minPayment; }
 
-    public void setMinPayment(long minPayment) { this.minPayment = minPayment; }
+    void setMinPayment(long minPayment) { this.minPayment = minPayment; }
 
-    public String getSymbol() { return symbol; }
+    String getSymbol() { return symbol; }
 
-    public void setSymbol(String symbol) { this.symbol = symbol; }
+    void setSymbol(String symbol) { this.symbol = symbol; }
 
-    public TimeUnit getSyncUnit() { return syncUnit; }
+    TimeUnit getSyncUnit() { return syncUnit; }
 
-    public void setSyncUnit(TimeUnit syncUnit) { this.syncUnit = syncUnit; }
+    void setSyncUnit(TimeUnit syncUnit) { this.syncUnit = syncUnit; }
 
-    public int getSyncScalar() { return syncScalar; }
+    int getSyncScalar() { return syncScalar; }
 
-    public void setSyncScalar(int syncScalar) { this.syncScalar = syncScalar; }
+    void setSyncScalar(int syncScalar) { this.syncScalar = syncScalar; }
 
-    public synchronized static PoolSettings getInstance() {
+    synchronized static PoolSettings getInstance() {
         if (classInstance == null)
             classInstance = new PoolSettings();
         return classInstance;

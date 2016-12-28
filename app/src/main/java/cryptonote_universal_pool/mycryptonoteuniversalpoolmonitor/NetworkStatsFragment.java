@@ -14,9 +14,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by tamfire on 22/12/16.
+ * Fragment for viewing current Network stats. Displays information about the Network of the pool
+ * which is being monitored.
+ *
+ * @author Anthony Tam
  */
-public class NetworkStatsFragment extends Fragment implements DissmissableFragment {
+public class NetworkStatsFragment extends Fragment implements DismissibleFragment {
     private ScheduledExecutorService executorService;
 
     @Override

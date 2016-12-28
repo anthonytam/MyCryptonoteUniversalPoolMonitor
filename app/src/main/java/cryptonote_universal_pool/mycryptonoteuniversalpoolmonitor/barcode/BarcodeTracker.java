@@ -23,7 +23,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 class BarcodeTracker extends Tracker<Barcode> {
     private BarcodeGraphicTrackerCallback mListener;
 
-    public interface BarcodeGraphicTrackerCallback {
+    interface BarcodeGraphicTrackerCallback {
         void onDetectedQrCode(Barcode barcode);
     }
 

@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor.barcode.BarcodeCaptureActivity;
 
@@ -25,7 +27,7 @@ import cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor.barcode.Barcod
  *
  * @author Anthony Tam
  */
-public class AppSettingsFragment extends Fragment implements DissmissableFragment,
+public class AppSettingsFragment extends Fragment implements DismissibleFragment,
                                                              View.OnClickListener {
     private final int BARCODE_READER_REQ = 1;
     @Override
@@ -75,9 +77,16 @@ public class AppSettingsFragment extends Fragment implements DissmissableFragmen
                                                                                       .toString());
         settings.setPoolPort(Integer.parseInt(((EditText)currentView.findViewById(
                                                         R.id.edit_poolport)).getText().toString()));
-        settings.setWalletAddress(((EditText)currentView.findViewById(R.id.edit_walletaddr))
-                                                                             .getText().toString());
-        //TODO: Validate wallet
+
+        String walletAddr = ((EditText)currentView.findViewById(R.id.edit_walletaddr)).getText().toString();
+        Pattern p = Pattern.compile("^4[0-9AB][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{93}$");
+        if (p.matcher(walletAddr).matches())
+            settings.setWalletAddress(walletAddr);
+        else {
+            Toast.makeText(getActivity().getApplicationContext(), getText(R.string.eng_invalidwallet),
+                    Toast.LENGTH_SHORT).show();
+            settings.setWalletAddress(null);
+        }
 
         switch (((Spinner)currentView.findViewById(R.id.spn_refresh)).getSelectedItem().toString()) {
             case "30 Seconds":

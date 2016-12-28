@@ -15,9 +15,12 @@ import java.util.Iterator;
 import java.util.Locale;
 
 /**
- * Created by tamfire on 26/12/16.
+ * Fetches data from the pool API. Will convert the data to a JSON objects and add the data
+ * to the singleton instance variables.
+ *
+ * @author Anthony Tam
  */
-public class DataFetcher extends AsyncTask<String, String, Boolean> {
+class DataFetcher extends AsyncTask<String, String, Boolean> {
 
     protected Boolean doInBackground(String... params) {
         PoolSettings settings = PoolSettings.getInstance();

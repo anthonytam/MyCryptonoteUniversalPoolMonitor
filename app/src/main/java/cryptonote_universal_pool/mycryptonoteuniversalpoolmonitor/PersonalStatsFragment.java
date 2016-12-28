@@ -14,9 +14,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by tamfire on 22/12/16.
+ * Fragment for viewing current user stats. Displays information about the user on the
+ * pool which is being monitored.
+ *
+ * @author Anthony Tam
  */
-public class PersonalStatsFragment extends Fragment implements DissmissableFragment {
+public class PersonalStatsFragment extends Fragment implements DismissibleFragment {
     private ScheduledExecutorService executorService;
 
     @Override
