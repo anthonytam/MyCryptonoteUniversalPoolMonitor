@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 class PoolSettings {
     private static PoolSettings classInstance;
 
+    private final String[] UNITS = {"H/s", "KH/s", "MH/s", "GH/s", "TH/s", "PH/s", "EH/s"};
+
     private String poolAddress;
     private String walletAddress;
     private int poolPort;
@@ -147,6 +149,8 @@ class PoolSettings {
     int getSyncScalar() { return syncScalar; }
 
     void setSyncScalar(int syncScalar) { this.syncScalar = syncScalar; }
+
+    String[] getUnits () { return UNITS; }
 
     synchronized static PoolSettings getInstance() {
         if (classInstance == null)

@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                                                                                                  0);
         PoolSettings settings = PoolSettings.getInstance();
         settings.setPoolAddr(savedSettings.getString("pooladdr", ""));
-        settings.setWalletAddress(savedSettings.getString("walletaddr", ""));
+        settings.setWalletAddress(savedSettings.getString("walletaddr", "wat"));
         settings.setPoolPort(savedSettings.getInt("poolport", 8117));
         settings.setSyncState(savedSettings.getBoolean("syncstate", true));
         settings.setSyncUnit(TimeUnit.valueOf(savedSettings.getString("syncunit", "MINUTES")));

@@ -80,9 +80,9 @@ public class AppSettingsFragment extends Fragment implements DismissibleFragment
 
         String walletAddr = ((EditText)currentView.findViewById(R.id.edit_walletaddr)).getText().toString();
         Pattern p = Pattern.compile("^4[0-9AB][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{93}$");
-        if (p.matcher(walletAddr).matches())
+        if (p.matcher(walletAddr).matches()) {
             settings.setWalletAddress(walletAddr);
-        else {
+        } else {
             Toast.makeText(getActivity().getApplicationContext(), getText(R.string.eng_invalidwallet),
                     Toast.LENGTH_SHORT).show();
             settings.setWalletAddress(null);

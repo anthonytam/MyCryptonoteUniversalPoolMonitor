@@ -10,7 +10,7 @@
 
     <string name="eng_mypool">My Pool:</string>
     <string name="eng_hashrate">Hash Rate:</string>
-    <string name="eng_blockfound">Block Found:</string>
+    <string name="eng_blockfound">Last Block Found:</string>
     <string name="eng_totblocks">Total Blocks:</string>
     <string name="eng_numminers">Number of Miners:</string>
     <string name="eng_donations">Donations:</string>
@@ -19,7 +19,7 @@
     <string name="eng_mystats">My Stats:</string>
     <string name="eng_pendbal">Pending Balance:</string>
     <string name="eng_totpaid">Total Paid:</string>
-    <string name="eng_lastshare">Last Share:</string>
+    <string name="eng_lastshare">Last Share Submitted:</string>
     <string name="eng_totshares">Total Shares:</string>
 
     <string name="eng_netstats">Network Stats:</string>
@@ -38,5 +38,5 @@
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
-    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="low_storage_error">Dependencies cannot be downloaded due to low device storage</string>
 </resources>

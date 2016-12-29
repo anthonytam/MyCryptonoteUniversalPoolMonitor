@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,6 +34,8 @@ public class PoolStatsFragment extends Fragment implements DismissibleFragment {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((TextView)view.findViewById(R.id.txt_pool_title)).setText(
+                PoolSettings.getInstance().getPoolAddr());
         final Runnable updateValues = new Runnable() {
             @Override
             public void run() {
@@ -49,19 +54,54 @@ public class PoolStatsFragment extends Fragment implements DismissibleFragment {
 
     private void updateValues(View view) {
         PoolSettings settings = PoolSettings.getInstance();
-        ((TextView) view.findViewById(R.id.txt_poolrate_value)).setText(String.format(Locale.US,
-                "%d", settings.getPoolHashRate()));
+        ((TextView) view.findViewById(R.id.txt_poolrate_value)).setText(String.format(Locale.US, "%s",
+                getFormattedUnits(settings.getPoolHashRate())));
+        //For some reason, the pool stats timestamp is already in terms of ms, whereas the other
+        //time stamps are not.
         ((TextView) view.findViewById(R.id.txt_blockfound_value)).setText(String.format(Locale.US,
-                "%d", settings.getPoolLastBlockFound()));
+                "%s", getTimeBetween(new Date(), new Date(settings.getPoolLastBlockFound()))));
         ((TextView) view.findViewById(R.id.txt_totblocks_value)).setText(String.format(Locale.US,
-                "%d", settings.getTotalBlocks()));
+                "%d %s", settings.getTotalBlocks(), settings.getTotalBlocks() == 1 ? "Block" : "Blocks"));
         ((TextView) view.findViewById(R.id.txt_numminers_value)).setText(String.format(Locale.US,
-                "%d", settings.getCurrMiners()));
+                "%d %s", settings.getCurrMiners(), settings.getCurrMiners() == 1 ? "Miner" : "Miners"));
         ((TextView) view.findViewById(R.id.txt_donations_value)).setText(String.format(Locale.US,
-                "%f", settings.getDonationAmount()));
+                "%.1f%%", settings.getDonationAmount()));
         ((TextView) view.findViewById(R.id.txt_poolfee_value)).setText(String.format(Locale.US,
-                "%f", settings.getFee()));
+                "%.1f%%", settings.getFee()+settings.getDonationAmount()));
 
+    }
+
+    private String getTimeBetween(Date date1, Date date2) {
+        long timeDiff = (date1.getTime() - date2.getTime())/1000;
+        String unit = timeDiff == 1 ? "Second" : "Seconds";
+        if (timeDiff >= 60) {
+            timeDiff /= 60;
+            unit = timeDiff == 1 ? "Minute" : "Minutes";
+            if (timeDiff >= 60) {
+                timeDiff /= 60;
+                if (timeDiff >= 24) {
+                    timeDiff /= 24;
+                    unit = timeDiff == 1 ? "Day" : "Days";
+                    if (timeDiff >= 7) {
+                        timeDiff /= 7;
+                        unit = timeDiff == 1 ? "Week" : "Weeks";
+                    }
+                }
+            }
+        }
+        return String.format(Locale.US, "%d %s", timeDiff, unit);
+    }
+
+    private String getFormattedUnits(double toFormat) {
+        int depth = 0;
+        while (toFormat >= 1000) {
+            if (depth == 6) //We have up to 7 denominations of units
+                break;
+            toFormat /= 1000;
+            depth += 1;
+        }
+        return String.format(Locale.US, "%s %s", new BigDecimal(toFormat).setScale(2,
+                RoundingMode.HALF_UP).toString(), PoolSettings.getInstance().getUnits()[depth]);
     }
 
     public void onDismiss() {

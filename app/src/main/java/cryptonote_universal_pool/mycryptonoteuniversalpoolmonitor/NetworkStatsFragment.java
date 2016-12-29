@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,6 +34,8 @@ public class NetworkStatsFragment extends Fragment implements DismissibleFragmen
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ((TextView)view.findViewById(R.id.txt_pool_title)).setText(
+                PoolSettings.getInstance().getPoolAddr());
         final Runnable updateValues = new Runnable() {
             @Override
             public void run() {
@@ -50,16 +55,50 @@ public class NetworkStatsFragment extends Fragment implements DismissibleFragmen
     private void updateValues(View view) {
         PoolSettings settings = PoolSettings.getInstance();
         ((TextView) view.findViewById(R.id.txt_hashrate_value)).setText(String.format(Locale.US,
-                "%d", settings.getNetworkHashRate()));
+                "%s", getFormattedUnits(settings.getNetworkHashRate())));
         ((TextView) view.findViewById(R.id.txt_blockfound_value)).setText(String.format(Locale.US,
-                "%d", settings.getNetworkLastBlockFound()));
+                "%s", getTimeBetween(new Date(), new Date(settings.getNetworkLastBlockFound()*1000))));
         ((TextView) view.findViewById(R.id.txt_diff_value)).setText(String.format(Locale.US,
                 "%d", settings.getDifficulty()));
         ((TextView) view.findViewById(R.id.txt_blockheight_value)).setText(String.format(Locale.US,
                 "%d", settings.getBlockHeight()));
         ((TextView) view.findViewById(R.id.txt_lastreward_value)).setText(String.format(Locale.US,
-                "%d", settings.getLastBlockReward()));
+                "%s %s", new BigDecimal((double)settings.getLastBlockReward() / (double)settings.getCoinUnits())
+                        .setScale(5, RoundingMode.HALF_UP).toString(), settings.getSymbol()));
 
+    }
+
+    private String getTimeBetween(Date date1, Date date2) {
+        long timeDiff = (date1.getTime() - date2.getTime())/1000;
+        String unit = timeDiff == 1 ? "Second" : "Seconds";
+        if (timeDiff >= 60) {
+            timeDiff /= 60;
+            unit = timeDiff == 1 ? "Minute" : "Minutes";
+            if (timeDiff >= 60) {
+                timeDiff /= 60;
+                if (timeDiff >= 24) {
+                    timeDiff /= 24;
+                    unit = timeDiff == 1 ? "Day" : "Days";
+                    if (timeDiff >= 7) {
+                        timeDiff /= 7;
+                        unit = timeDiff == 1 ? "Week" : "Weeks";
+                    }
+                }
+            }
+        }
+        return String.format(Locale.US, "%d %s", timeDiff, unit);
+    }
+
+    private String getFormattedUnits(double toFormat) {
+        int depth = 0;
+        while (toFormat >= 1000) {
+            if (depth == 6) //We have up to 7 denominations of units
+                break;
+            toFormat /= 1000;
+            depth += 1;
+        }
+        return String.format(Locale.US, "%s %s", new BigDecimal(toFormat).setScale(2,
+                RoundingMode.HALF_UP).toString(), PoolSettings.getInstance().getUnits()[depth]);
     }
 
     public void onDismiss() {
