@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -113,7 +114,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_refreshNow:
                 new DataFetcher().execute();
-                fragment = currentFragment;
+                try {
+                    fragment = currentFragment.getClass().getConstructor().newInstance();
+                // Can't use multi catch with API 16.
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    fragment = currentFragment;
+                }
                 break;
             default:
                 fragment = new PoolStatsFragment();
@@ -129,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
-        menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
         mDrawer.closeDrawers();
     }
@@ -149,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(
                         Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                        InputMethodManager.HIDE_IMPLICIT_ONLY);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                getCurrentFocus().clearFocus();
             }
         });
         return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,

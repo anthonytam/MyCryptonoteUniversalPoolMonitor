@@ -73,18 +73,19 @@ public class PoolStatsFragment extends Fragment implements DismissibleFragment {
 
     private String getTimeBetween(Date date1, Date date2) {
         long timeDiff = (date1.getTime() - date2.getTime())/1000;
-        String unit = timeDiff == 1 ? "Second" : "Seconds";
+        String unit = timeDiff == 1 ? "Second Ago" : "Seconds Ago";
         if (timeDiff >= 60) {
             timeDiff /= 60;
-            unit = timeDiff == 1 ? "Minute" : "Minutes";
+            unit = timeDiff == 1 ? "Minute Ago" : "Minutes Ago";
             if (timeDiff >= 60) {
                 timeDiff /= 60;
+                unit = timeDiff == 1 ? "Hour Ago" : "Hours Ago";
                 if (timeDiff >= 24) {
                     timeDiff /= 24;
-                    unit = timeDiff == 1 ? "Day" : "Days";
+                    unit = timeDiff == 1 ? "Day Ago" : "Days Ago";
                     if (timeDiff >= 7) {
                         timeDiff /= 7;
-                        unit = timeDiff == 1 ? "Week" : "Weeks";
+                        unit = timeDiff == 1 ? "Week Ago" : "Weeks Ago";
                     }
                 }
             }

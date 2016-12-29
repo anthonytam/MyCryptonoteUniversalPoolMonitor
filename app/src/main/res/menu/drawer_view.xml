@@ -22,6 +22,7 @@
         <item
             android:id="@+id/nav_refreshNow"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Refresh Now" />
+            android:title="Refresh Now"
+            android:checkable="false" />
     </group>
 </menu>

@@ -14,12 +14,12 @@
     <string name="eng_totblocks">Total Blocks:</string>
     <string name="eng_numminers">Number of Miners:</string>
     <string name="eng_donations">Donations:</string>
-    <string name="eng_poolfee">Pool Fee:</string>
+    <string name="eng_poolfee">Total Pool Fees:</string>
 
     <string name="eng_mystats">My Stats:</string>
     <string name="eng_pendbal">Pending Balance:</string>
     <string name="eng_totpaid">Total Paid:</string>
-    <string name="eng_lastshare">Last Share Submitted:</string>
+    <string name="eng_lastshare">Last Share:</string>
     <string name="eng_totshares">Total Shares:</string>
 
     <string name="eng_netstats">Network Stats:</string>
