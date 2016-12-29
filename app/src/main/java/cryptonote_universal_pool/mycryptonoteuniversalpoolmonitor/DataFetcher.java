@@ -24,6 +24,8 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
 
     protected Boolean doInBackground(String... params) {
         PoolSettings settings = PoolSettings.getInstance();
+        if (settings.getWalletAddress() == null || settings.getWalletAddress().equals(""))
+            return false;
         String generalStats = requestStats("/stats");
         if (generalStats.equals(""))
             return false;
