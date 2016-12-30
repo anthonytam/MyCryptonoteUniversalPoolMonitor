@@ -1,6 +1,8 @@
 package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,11 +26,13 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
 
     protected Boolean doInBackground(String... params) {
         PoolSettings settings = PoolSettings.getInstance();
-        if (settings.getWalletAddress() == null || settings.getWalletAddress().equals(""))
+        if (settings.getPoolAddr() == null || settings.getPoolAddr().equals("")) {
             return false;
+        }
         String generalStats = requestStats("/stats");
-        if (generalStats.equals(""))
+        if (generalStats.equals("")) {
             return false;
+        }
         try {
             JSONObject json = new JSONObject(generalStats);
 
@@ -45,6 +49,9 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
                                                                                 (String)it.next()));
 
             JSONObject pool = json.getJSONObject("pool");
+            if (pool.getInt("totalBlocks")-1 == settings.getTotalBlocks())
+                settings.setNewBlockFound(true);
+            else settings.setNewBlockFound(true);
             settings.setTotalBlocks(pool.getInt("totalBlocks"));
             settings.setCurrMiners(pool.getInt("miners"));
             settings.setPoolHashRate(pool.getLong("hashrate"));
@@ -60,26 +67,27 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
             e.printStackTrace();
             return false;
         }
-
-        String walletStats = requestStats(String.format("/stats_address?address=%s",
-                                                        settings.getWalletAddress()));
-        if (walletStats.equals(""))
-            return false;
-        try {
-            JSONObject json = new JSONObject(walletStats);
-            if (json.has("error"))
+        if (settings.getWalletAddress() != null || settings.getWalletAddress() != "") {
+            String walletStats = requestStats(String.format("/stats_address?address=%s",
+                    settings.getWalletAddress()));
+            if (walletStats.equals(""))
                 return false;
+            try {
+                JSONObject json = new JSONObject(walletStats);
+                if (json.has("error"))
+                    return false;
 
-            JSONObject config = json.getJSONObject("stats");
+                JSONObject config = json.getJSONObject("stats");
 
-            settings.setTotalShares(Long.parseLong(config.getString("hashes")));
-            settings.setLastShare(Long.parseLong(config.getString("lastShare")));
-            settings.setPendingBalance(Long.parseLong(config.getString("balance")));
-            settings.setTotalPaid(Long.parseLong(config.getString("paid")));
-            settings.setHashRate(config.getString("hashrate"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return false;
+                settings.setTotalShares(Long.parseLong(config.getString("hashes")));
+                settings.setLastShare(Long.parseLong(config.getString("lastShare")));
+                settings.setPendingBalance(Long.parseLong(config.getString("balance")));
+                settings.setTotalPaid(Long.parseLong(config.getString("paid")));
+                settings.setHashRate(config.getString("hashrate"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return true;
     }
