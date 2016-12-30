@@ -26,6 +26,7 @@ class PoolSettings {
     private String symbol;
 
     private int totalBlocks;
+    private boolean newBlockFound;
     private int currMiners;
     private long poolHashRate;
     private long poolLastBlockFound;
@@ -61,7 +62,15 @@ class PoolSettings {
 
     void setHashRate(String hashRate) { this.hashRate = hashRate; }
 
-    long getNetworkHashRate() { return difficulty/coinDifficultyTarget; }
+    long getNetworkHashRate() {
+        try {
+            return difficulty / coinDifficultyTarget;
+        } catch (NumberFormatException e) {
+            return 0;
+        } catch (ArithmeticException e) {
+            return  0;
+        }
+    }
 
     long getDifficulty() { return difficulty; }
 
@@ -116,11 +125,19 @@ class PoolSettings {
 
     void setSyncState(boolean syncData) { this.syncData = syncData; }
 
+    void setNewBlockFound (boolean newBlockFound) { this.newBlockFound = newBlockFound; }
+
+    boolean getNewBlockFound () { return newBlockFound; }
+
     double getFee() { return fee; }
 
     void setFee(double fee) { this.fee = fee; }
 
-    long getCoinUnits() { return coinUnits; }
+    long getCoinUnits() {
+        if (coinUnits == 0)
+            return 1;
+        return coinUnits;
+    }
 
     void setCoinUnits(long coinUnits) { this.coinUnits = coinUnits; }
 
