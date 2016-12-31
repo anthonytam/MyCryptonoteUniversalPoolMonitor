@@ -1,8 +1,6 @@
 package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +68,7 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
             settings.setLastBlockReward(network.getLong("reward"));
 
             JSONObject pool = json.getJSONObject("pool");
-            if (pool.getInt("totalBlocks")-1 == settings.getTotalBlocks() && !settings.isInitalLaunch())
+            if (pool.getInt("totalBlocks")-1 == settings.getTotalBlocks() && !settings.isInitialLaunch())
                 settings.setNewBlockFound(true);
             else settings.setNewBlockFound(false);
             settings.setTotalBlocks(pool.getInt("totalBlocks"));

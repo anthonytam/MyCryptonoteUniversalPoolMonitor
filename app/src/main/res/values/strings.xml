@@ -34,6 +34,7 @@
     <string name="eng_walletaddr">Wallet Address:</string>
     <string name="eng_refreshrate">Refresh Rate:</string>
     <string name="eng_invalidwallet">Invalid wallet specified.</string>
+    <string name="eng_enablenotifications">Enable Notifications:</string>
 
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -44,6 +45,7 @@ public class AppSettingsFragment extends Fragment implements DismissibleFragment
         ((EditText)view.findViewById(R.id.edit_poolport)).setText(String.format(Locale.US, "%d",
                                                                         settings.getPoolPort()));
         ((EditText)view.findViewById(R.id.edit_walletaddr)).setText(settings.getWalletAddress());
+        ((Switch)view.findViewById(R.id.swc_enablenotifications)).setChecked(settings.shouldShowNotifications());
         if (settings.shouldSync())
             ((Spinner)view.findViewById(R.id.spn_refresh)).setSelection(getIndex((Spinner)view
                 .findViewById(R.id.spn_refresh),String.format(Locale.US, "%d %s",
@@ -87,6 +89,9 @@ public class AppSettingsFragment extends Fragment implements DismissibleFragment
                     Toast.LENGTH_SHORT).show();
             settings.setWalletAddress("");
         }
+
+        settings.setShowNotifications(((Switch)currentView.findViewById(
+                R.id.swc_enablenotifications)).isChecked());
 
         switch (((Spinner)currentView.findViewById(R.id.spn_refresh)).getSelectedItem().toString()) {
             case "30 Seconds":

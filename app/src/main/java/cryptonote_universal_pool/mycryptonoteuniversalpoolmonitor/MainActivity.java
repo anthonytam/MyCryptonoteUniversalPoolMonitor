@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 if (PoolSettings.getInstance().shouldSync()) {
                     new DataFetcher().execute();
-                    if (PoolSettings.getInstance().getNewBlockFound()) {
+                    if (PoolSettings.getInstance().getNewBlockFound() && PoolSettings.getInstance().shouldShowNotifications()) {
                         long[] vibratePattern = {0, 200, 200, 200};
                         NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(MainActivity.super.getApplicationContext())
                                 .setSmallIcon(R.drawable.cryptonotelogo)
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                             PoolSettings.getInstance().getSyncUnit());
         // Let data download initially
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -137,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_refreshNow:
                 new DataFetcher().execute();
-                if (PoolSettings.getInstance().getNewBlockFound()) {
+                if (PoolSettings.getInstance().getNewBlockFound() && PoolSettings.getInstance().shouldShowNotifications()) {
                     long[] vibratePattern = {0, 200, 200, 200};
                     NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(MainActivity.super.getApplicationContext())
                             .setSmallIcon(R.drawable.cryptonotelogo)
@@ -208,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
         settings.setSyncState(savedSettings.getBoolean("syncstate", true));
         settings.setSyncUnit(TimeUnit.valueOf(savedSettings.getString("syncunit", "MINUTES")));
         settings.setSyncScalar(savedSettings.getInt("syncscalar", 1));
+        settings.setShowNotifications(savedSettings.getBoolean("shownotifications", true));
         settings.setLaunchState(true);
     }
 
@@ -222,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean("syncstate", settings.shouldSync());
         editor.putString("syncunit", settings.getSyncUnit().name());
         editor.putInt("syncscalar", settings.getSyncScalar());
+        editor.putBoolean("shownotifications", settings.shouldShowNotifications());
         editor.apply();
 
         executorService.shutdownNow();

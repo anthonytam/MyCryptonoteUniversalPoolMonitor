@@ -91,4 +91,17 @@
         android:id="@+id/spn_refresh"
         android:spinnerMode="dialog"
         android:entries="@array/refreshOptions" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <Switch
+        android:text="@string/eng_enablenotifications"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="24sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:id="@+id/swc_enablenotifications" />
 </LinearLayout>

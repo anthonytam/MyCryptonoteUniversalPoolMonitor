@@ -17,7 +17,8 @@ class PoolSettings {
     private boolean syncData;
     private TimeUnit syncUnit;
     private int syncScalar;
-    private boolean isInitalLaunch;
+    private boolean isInitialLaunch;
+    private boolean showNotifications;
 
     private double fee;
     private long coinUnits;
@@ -170,9 +171,13 @@ class PoolSettings {
 
     String[] getUnits () { return UNITS; }
 
-    void setLaunchState (boolean state) { isInitalLaunch = state; }
+    void setLaunchState (boolean state) { isInitialLaunch = state; }
 
-    boolean isInitalLaunch () { return  isInitalLaunch; }
+    boolean isInitialLaunch() { return isInitialLaunch; }
+
+    void setShowNotifications ( boolean newState) { showNotifications = newState; }
+
+    boolean shouldShowNotifications () { return showNotifications; }
 
     synchronized static PoolSettings getInstance() {
         if (classInstance == null)
