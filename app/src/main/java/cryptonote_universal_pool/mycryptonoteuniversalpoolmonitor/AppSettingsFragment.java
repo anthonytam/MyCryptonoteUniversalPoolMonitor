@@ -85,7 +85,7 @@ public class AppSettingsFragment extends Fragment implements DismissibleFragment
         } else {
             Toast.makeText(getActivity().getApplicationContext(), getText(R.string.eng_invalidwallet),
                     Toast.LENGTH_SHORT).show();
-            settings.setWalletAddress(null);
+            settings.setWalletAddress("");
         }
 
         switch (((Spinner)currentView.findViewById(R.id.spn_refresh)).getSelectedItem().toString()) {

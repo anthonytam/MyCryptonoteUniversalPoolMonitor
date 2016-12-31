@@ -17,6 +17,7 @@ class PoolSettings {
     private boolean syncData;
     private TimeUnit syncUnit;
     private int syncScalar;
+    private boolean isInitalLaunch;
 
     private double fee;
     private long coinUnits;
@@ -168,6 +169,10 @@ class PoolSettings {
     void setSyncScalar(int syncScalar) { this.syncScalar = syncScalar; }
 
     String[] getUnits () { return UNITS; }
+
+    void setLaunchState (boolean state) { isInitalLaunch = state; }
+
+    boolean isInitalLaunch () { return  isInitalLaunch; }
 
     synchronized static PoolSettings getInstance() {
         if (classInstance == null)

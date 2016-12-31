@@ -15,6 +15,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 /**
  * Fetches data from the pool API. Will convert the data to a JSON objects and add the data
@@ -37,25 +40,28 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
             JSONObject json = new JSONObject(generalStats);
 
             JSONObject config = json.getJSONObject("config");
-            JSONObject donationAddrs = config.getJSONObject("donation");
+            String poolVer = config.getString("version");
+            if(poolVer.equals("v0.99.3.3")) {
+                //This version found coin calculation differently
+                settings.setCoinUnits(config.getLong("denominationUnit")*10);
+                settings.setCoinDifficultyTarget(config.getInt("weight"));
+
+            } else {
+                settings.setCoinUnits(config.getLong("coinUnits"));
+                settings.setCoinDifficultyTarget(config.getInt("coinDifficultyTarget"));
+            }
             settings.setFee(config.getDouble("fee"));
-            settings.setCoinUnits(config.getLong("coinUnits"));
-            settings.setCoinDifficultyTarget(config.getInt("coinDifficultyTarget"));
             settings.setSymbol(config.getString("symbol"));
             settings.setMinPayment(config.getLong("minPaymentThreshold"));
             settings.setDonationAmount(0.0);
-            for(Iterator it = donationAddrs.keys(); it.hasNext(); )
-                settings.setDonationAmount(settings.getDonationAmount() + donationAddrs.getDouble(
-                                                                                (String)it.next()));
-
-            JSONObject pool = json.getJSONObject("pool");
-            if (pool.getInt("totalBlocks")-1 == settings.getTotalBlocks())
-                settings.setNewBlockFound(true);
-            else settings.setNewBlockFound(true);
-            settings.setTotalBlocks(pool.getInt("totalBlocks"));
-            settings.setCurrMiners(pool.getInt("miners"));
-            settings.setPoolHashRate(pool.getLong("hashrate"));
-            settings.setPoolLastBlockFound(pool.getLong("lastBlockFound"));
+            try {
+                JSONObject donationAddrs = config.getJSONObject("donation");
+                for (Iterator it = donationAddrs.keys(); it.hasNext(); )
+                    settings.setDonationAmount(settings.getDonationAmount() + donationAddrs.getDouble(
+                            (String) it.next()));
+            } catch (JSONException e) {
+                // The pool has no donations
+            }
 
             JSONObject network = json.getJSONObject("network");
             settings.setDifficulty(network.getLong("difficulty"));
@@ -63,11 +69,21 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
             settings.setNetworkLastBlockFound(network.getLong("timestamp"));
             settings.setLastBlockReward(network.getLong("reward"));
 
+            JSONObject pool = json.getJSONObject("pool");
+            if (pool.getInt("totalBlocks")-1 == settings.getTotalBlocks() && !settings.isInitalLaunch())
+                settings.setNewBlockFound(true);
+            else settings.setNewBlockFound(false);
+            settings.setTotalBlocks(pool.getInt("totalBlocks"));
+            settings.setCurrMiners(pool.getInt("miners"));
+            settings.setPoolHashRate(pool.getLong("hashrate"));
+            settings.setPoolLastBlockFound(pool.getLong("lastBlockFound"));
+
+
         } catch (JSONException e) {
             e.printStackTrace();
             return false;
         }
-        if (settings.getWalletAddress() != null || settings.getWalletAddress() != "") {
+        if (settings.getWalletAddress() != null || !settings.getWalletAddress().equals("")) {
             String walletStats = requestStats(String.format("/stats_address?address=%s",
                     settings.getWalletAddress()));
             if (walletStats.equals(""))
@@ -92,6 +108,12 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
         return true;
     }
 
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+        PoolSettings.getInstance().setLaunchState(false);
+    }
+
     private String requestStats (String path) {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
@@ -101,7 +123,7 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
             connection = (HttpURLConnection) url.openConnection();
             connection.connect();
 
-            InputStream stream = connection.getInputStream();
+            InputStream stream = wrapStream(connection.getContentEncoding(), connection.getInputStream());
             reader = new BufferedReader(new InputStreamReader(stream));
 
             StringBuilder buffer = new StringBuilder();
@@ -127,5 +149,19 @@ class DataFetcher extends AsyncTask<String, String, Boolean> {
             }
         }
         return "";
+    }
+
+    private static InputStream wrapStream(String contentEncoding, InputStream inputStream)
+            throws IOException {
+        if (contentEncoding == null || "identity".equalsIgnoreCase(contentEncoding)) {
+            return inputStream;
+        }
+        if ("gzip".equalsIgnoreCase(contentEncoding)) {
+            return new GZIPInputStream(inputStream);
+        }
+        if ("deflate".equalsIgnoreCase(contentEncoding)) {
+            return new InflaterInputStream(inputStream, new Inflater(true));
+        }
+        throw new RuntimeException("unsupported content-encoding: " + contentEncoding);
     }
 }

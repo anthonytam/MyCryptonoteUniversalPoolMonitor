@@ -36,6 +36,7 @@ public class PoolStatsFragment extends Fragment implements DismissibleFragment {
 
         ((TextView)view.findViewById(R.id.txt_pool_title)).setText(
                 PoolSettings.getInstance().getPoolAddr());
+        updateValues(view);
         final Runnable updateValues = new Runnable() {
             @Override
             public void run() {

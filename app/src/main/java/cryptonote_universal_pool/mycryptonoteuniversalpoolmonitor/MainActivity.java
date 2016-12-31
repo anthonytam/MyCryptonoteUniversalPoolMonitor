@@ -1,5 +1,6 @@
 package cryptonote_universal_pool.mycryptonoteuniversalpoolmonitor;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -8,15 +9,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -44,15 +48,34 @@ public class MainActivity extends AppCompatActivity {
         fetchData = new Runnable() {
             @Override
             public void run() {
-                if (PoolSettings.getInstance().shouldSync())
+                if (PoolSettings.getInstance().shouldSync()) {
                     new DataFetcher().execute();
+                    if (PoolSettings.getInstance().getNewBlockFound()) {
+                        long[] vibratePattern = {0, 200, 200, 200};
+                        NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(MainActivity.super.getApplicationContext())
+                                .setSmallIcon(R.drawable.cryptonotelogo)
+                                .setContentTitle("New Block Found!")
+                                .setContentText(String.format(Locale.US, "Block value: %s %s",
+                                        new BigDecimal((double)PoolSettings.getInstance().getLastBlockReward()/
+                                                (double)PoolSettings.getInstance().getCoinUnits())
+                                .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), PoolSettings.getInstance().getSymbol()))
+                                .setVibrate(vibratePattern);
+                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        notificationManager.notify(0, nBuilder.build());
+                    }
+                }
             }
         };
         executorService = Executors.newScheduledThreadPool(1);
         executorService.scheduleAtFixedRate(fetchData, 0,
                                             PoolSettings.getInstance().getSyncScalar(),
                                             PoolSettings.getInstance().getSyncUnit());
-
+        // Let data download initially
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_main);
         currentFragment = new PoolStatsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent,currentFragment)
@@ -114,9 +137,21 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_refreshNow:
                 new DataFetcher().execute();
+                if (PoolSettings.getInstance().getNewBlockFound()) {
+                    long[] vibratePattern = {0, 200, 200, 200};
+                    NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(MainActivity.super.getApplicationContext())
+                            .setSmallIcon(R.drawable.cryptonotelogo)
+                            .setContentTitle("New Block Found!")
+                            .setContentText(String.format(Locale.US, "Block value: %s %s",
+                                    new BigDecimal((double)PoolSettings.getInstance().getLastBlockReward()/
+                                            (double)PoolSettings.getInstance().getCoinUnits())
+                                    .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), PoolSettings.getInstance().getSymbol()))
+                            .setVibrate(vibratePattern);
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager.notify(0, nBuilder.build());
+                }
                 try {
                     fragment = currentFragment.getClass().getConstructor().newInstance();
-                // Can't use multi catch with API 16.
                 } catch (Exception e) {
                     e.printStackTrace();
                     fragment = currentFragment;
@@ -173,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         settings.setSyncState(savedSettings.getBoolean("syncstate", true));
         settings.setSyncUnit(TimeUnit.valueOf(savedSettings.getString("syncunit", "MINUTES")));
         settings.setSyncScalar(savedSettings.getInt("syncscalar", 1));
+        settings.setLaunchState(true);
     }
 
     private void saveAppSettings() {
@@ -190,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
         executorService.shutdownNow();
         executorService = Executors.newScheduledThreadPool(1);
-        executorService.scheduleAtFixedRate(fetchData, settings.getSyncScalar(),
+        executorService.scheduleAtFixedRate(fetchData, 0,
                 settings.getSyncScalar(),
                 settings.getSyncUnit());
     }
